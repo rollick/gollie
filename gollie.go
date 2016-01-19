@@ -48,17 +48,23 @@ type MethodList struct {
 // Payment is a payment object
 // https://www.mollie.com/nl/docs/reference/payments/get#response
 type Payment struct {
-	ID          string      `json:"id"`
-	Description string      `json:"description"`
-	Mode        string      `json:"mode"`
-	Status      string      `json:"status"`
-	Locale      string      `json:"locale"`
-	ProfileID   string      `json:"profileId"`
-	Metadata    interface{} `json:"metadata"`
-	Links       struct {
-		PaymentUrl  string `json:"paymentUrl"`
-		RedirectUrl string `json:"redirectUrl"`
-	} `json:"links"`
+	ID          string          `json:"id"`
+	Description string          `json:"description"`
+	Amount      decimal.Decimal `json:"amount"`
+	Mode        string          `json:"mode"`
+	Method      string          `json:"method"`
+	Status      string          `json:"status"`
+	Locale      string          `json:"locale"`
+	ProfileID   string          `json:"profileId"`
+	Metadata    interface{}     `json:"metadata"`
+	Links       PaymentLinks    `json:"links"`
+}
+
+type PaymentLinks struct {
+	PaymentUrl  string `json:"paymentUrl"`
+	WebhookUrl  string `json:"webhookUrl"`
+	RedirectUrl string `json:"redirectUrl"`
+	Settlement  string `json:"settlement"`
 }
 
 // PaymentList is a list of payment objects and list metadata
