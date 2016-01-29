@@ -77,6 +77,7 @@ type PaymentList struct {
 // MollieError represents a Mollie API error response
 type MollieError struct {
 	Err struct {
+		Type    string `json:"type"`
 		Message string `json:"message"`
 		Field   string `json:"field"`
 	} `json:"error"`
@@ -84,7 +85,7 @@ type MollieError struct {
 
 // Errorr is a Formatted MollieError
 func (e MollieError) Error() string {
-	return fmt.Sprintf("Mollie Error: %v %v", e.Err.Message, e.Err.Field)
+	return fmt.Sprintf("Mollie %v error: %v %v", e.Err.Type, e.Err.Message, e.Err.Field)
 }
 
 // PaymentRequest is a payment request
@@ -174,7 +175,7 @@ func (s *PaymentService) List(params *ListParams) (PaymentList, *http.Response, 
 	payments := new(PaymentList)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path("payments").QueryStruct(params).Receive(payments, mollieError)
-	if err == nil {
+	if err == nil && mollieError.Err.Type != "" {
 		err = mollieError
 	}
 
@@ -186,9 +187,7 @@ func (s *PaymentService) Fetch(paymentId string) (Payment, *http.Response, error
 	payment := new(Payment)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Get(fmt.Sprintf("payments/%s", paymentId)).Receive(payment, mollieError)
-
-	fmt.Println(resp.Status)
-	if err == nil {
+	if err == nil && mollieError.Err.Type != "" {
 		err = mollieError
 	}
 	return *payment, resp, err
@@ -199,9 +198,7 @@ func (s *PaymentService) Create(paymentBody *PaymentRequest) (Payment, *http.Res
 	payment := new(Payment)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Post("payments").BodyJSON(paymentBody).Receive(payment, mollieError)
-
-	fmt.Println(resp.Status)
-	if err == nil {
+	if err == nil && mollieError.Err.Type != "" {
 		err = mollieError
 	}
 	return *payment, resp, err
