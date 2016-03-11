@@ -26,7 +26,7 @@ type ListMetadata struct {
 // Method is a payment method type
 // https://www.mollie.com/nl/docs/reference/methods/get
 type Method struct {
-	ID          int    `json:"id"`
+	ID          string `json:"id"`
 	Description string `json:"description"`
 	Image       struct {
 		Normal string `json:"normal"`
@@ -143,8 +143,7 @@ func (s *MethodService) List() (MethodList, *http.Response, error) {
 	methods := new(MethodList)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path("methods").Receive(methods, mollieError)
-
-	if err == nil {
+	if err == nil && mollieError.Err.Type != "" {
 		err = mollieError
 	}
 
