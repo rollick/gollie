@@ -38,10 +38,10 @@ type Method struct {
 	} `json:"amount"`
 }
 
-// PaymentList is a list of payment objects and list metadata
-// https://www.mollie.com/nl/docs/reference/payments/list#response
+// MethodList is a list of method objects and list metadata
+// https://www.mollie.com/en/docs/reference/methods/list#response
 type MethodList struct {
-	Data         []*Payment `json:"data"`
+	Data         []*Method `json:"data"`
 	ListMetadata `bson:",inline"`
 }
 
