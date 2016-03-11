@@ -33,8 +33,8 @@ type Method struct {
 		Bigger string `json:"bigger"`
 	} `json:"image"`
 	Amount struct {
-		Minimum int `json:"minimum"`
-		Maximum int `json:"maximum"`
+		Minimum string `json:"minimum"`
+		Maximum string `json:"maximum"`
 	} `json:"amount"`
 }
 
