@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/dghubble/sling"
-	"github.com/shopspring/decimal"
+	"github.com/rollick/decimal"
 )
 
 // SubscriptionService provides methods for accessing subscription records.

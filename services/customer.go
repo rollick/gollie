@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/dghubble/sling"
-	"github.com/shopspring/decimal"
+	"github.com/rollick/decimal"
 )
 
 // CustomerList is a list of customer objects and list metadata
