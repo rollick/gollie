@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/dghubble/sling"
-	"github.com/shopspring/decimal"
+	"github.com/rollick/decimal"
 )
 
 // Payment is a payment object
