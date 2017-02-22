@@ -18,12 +18,18 @@ type Payment struct {
 	PaidDatetime      *time.Time       `json:"paidDatetime"`
 	CancelledDatetime *time.Time       `json:"cancelledDatetime"`
 	ExpiredDatetime   *time.Time       `json:"expiredDatetime"`
+	ExpiryPeriod      string           `json:"expiryPeriod"`
 	Amount            *decimal.Decimal `json:"amount"`
+	AmountRemaining   *decimal.Decimal `json:"amountRemaining"`
+	AmountRefunded    *decimal.Decimal `json:"amountRefunded"`
 	Mode              string           `json:"mode"`
 	Method            string           `json:"method"`
 	Status            string           `json:"status"`
 	Locale            string           `json:"locale"`
 	ProfileID         string           `json:"profileId"`
+	CustomerID        string           `json:"customerId"`
+	MandateID         string           `json:"mandateId"`
+	RecurringType     string           `json:"recurringType"`
 	SettlementID      string           `json:"settlementID"`
 	Metadata          interface{}      `json:"metadata"`
 	Links             PaymentLinks     `json:"links"`

@@ -56,6 +56,38 @@ type CustomerRequest struct {
 	Metadata interface{} `json:"metadata,omitempty"`
 }
 
+// Mandate is a customer mandate object
+// https://www.mollie.com/en/docs/reference/mandates/create#response
+type Mandate struct {
+	Resource         string `json:"resource"`
+	Id               string `json:"id"`
+	Status           string `json:"status"`
+	Method           string `json:"method"`
+	CustomerId       string `json:"customerId"`
+	Details          MandateDetails
+	MandateReference string     `json:"mandateReference"`
+	CreatedDateTime  *time.Time `json:"createdDateTime"`
+}
+
+// MandateDetails is the payment method details for a customer mandate
+type MandateDetails struct {
+	ConsumerName    string `json:"consumerName"`
+	ConsumerAccount string `json:"consumerAccount"`
+	ConsumerBic     string `json:"consumerBic"`
+	CardHolder      string `json:"cardHolder"`
+	CardNumber      string `json:"cardNumber"`
+	CardLabel       string `json:"cardLabel"`
+	CardFingerprint string `json:"cardFingerprint"`
+	CardExpiryDate  string `json:"cardExpiryDate"`
+}
+
+// MandateList is a list of customer mandate objects and list metadata
+// https://www.mollie.com/en/docs/reference/mandates/list#response
+type MandateList struct {
+	Data         []*Mandate `json:"data"`
+	ListMetadata `bson:",inline"`
+}
+
 // CustomerService provides methods for accessing customer records.
 type CustomerService struct {
 	sling *sling.Sling
@@ -94,7 +126,7 @@ func (s *CustomerService) Fetch(customerId string) (Customer, *http.Response, er
 	return *customer, resp, err
 }
 
-// Create creates a new payment
+// Create creates a new customer
 func (s *CustomerService) Create(customerBody *CustomerRequest) (Customer, *http.Response, error) {
 	customer := new(Customer)
 	mollieError := new(MollieError)
@@ -127,4 +159,40 @@ func (s *CustomerService) Payment(customerId string, paymentBody PaymentRequest)
 	}
 
 	return *payment, resp, err
+}
+
+// MandateList returns all customer mandates created
+func (s *CustomerService) MandateList(customerId string, params *ListParams) (MandateList, *http.Response, error) {
+	mandates := new(MandateList)
+	mollieError := new(MollieError)
+	resp, err := s.sling.New().Path(fmt.Sprintf("customers/%s/mandates", customerId)).QueryStruct(params).Receive(mandates, mollieError)
+	if err == nil && mollieError.Err.Type != "" {
+		err = mollieError
+	}
+
+	return *mandates, resp, err
+}
+
+// Mandate creates a new customer mandate
+func (s *CustomerService) Mandate(customerId string, mandateBody PaymentRequest) (Mandate, *http.Response, error) {
+	mandate := new(Mandate)
+	mollieError := new(MollieError)
+	resp, err := s.sling.New().Post(fmt.Sprintf("customers/%s/mandates", customerId)).BodyJSON(mandateBody).Receive(mandate, mollieError)
+	if err == nil && mollieError.Err.Type != "" {
+		err = mollieError
+	}
+
+	return *mandate, resp, err
+}
+
+// MandateFetch returns a customer mandate
+func (s *CustomerService) MandateFetch(customerId string, mandateId string) (Mandate, *http.Response, error) {
+	mandate := new(Mandate)
+	mollieError := new(MollieError)
+	resp, err := s.sling.New().Path(fmt.Sprintf("customers/%s/mandates/%s", customerId, mandateId)).Receive(mandate, mollieError)
+	if err == nil && mollieError.Err.Type != "" {
+		err = mollieError
+	}
+
+	return *mandate, resp, err
 }
