@@ -12,29 +12,29 @@ import (
 // Payment is a payment object
 // https://www.mollie.com/nl/docs/reference/payments/get#response
 type Payment struct {
-	ID                string           `json:"id"`
-	Description       string           `json:"description"`
-	CreatedDatetime   *time.Time       `json:"createdDatetime"`
-	PaidDatetime      *time.Time       `json:"paidDatetime"`
-	CancelledDatetime *time.Time       `json:"cancelledDatetime"`
-	ExpiredDatetime   *time.Time       `json:"expiredDatetime"`
-	ExpiryPeriod      string           `json:"expiryPeriod"`
-	Amount            *decimal.Decimal `json:"amount"`
-	AmountRemaining   *decimal.Decimal `json:"amountRemaining"`
-	AmountRefunded    *decimal.Decimal `json:"amountRefunded"`
-	Mode              string           `json:"mode"`
-	Method            string           `json:"method"`
-	Status            string           `json:"status"`
-	Locale            string           `json:"locale"`
-	CountryCode       string           `json:"countryCode"`
-	ProfileID         string           `json:"profileId"`
-	CustomerID        string           `json:"customerId"`
-	MandateID         string           `json:"mandateId"`
-	RecurringType     string           `json:"recurringType"`
-	SettlementID      string           `json:"settlementId"`
-	Metadata          interface{}      `json:"metadata"`
-	Details           interface{}      `json:"details"`
-	Links             PaymentLinks     `json:"links"`
+	ID                string          `json:"id"`
+	Description       string          `json:"description"`
+	CreatedDatetime   *time.Time      `json:"createdDatetime"`
+	PaidDatetime      *time.Time      `json:"paidDatetime"`
+	CancelledDatetime *time.Time      `json:"cancelledDatetime"`
+	ExpiredDatetime   *time.Time      `json:"expiredDatetime"`
+	ExpiryPeriod      string          `json:"expiryPeriod"`
+	Amount            decimal.Decimal `json:"amount"`
+	AmountRemaining   decimal.Decimal `json:"amountRemaining"`
+	AmountRefunded    decimal.Decimal `json:"amountRefunded"`
+	Mode              string          `json:"mode"`
+	Method            string          `json:"method"`
+	Status            string          `json:"status"`
+	Locale            string          `json:"locale"`
+	CountryCode       string          `json:"countryCode"`
+	ProfileID         string          `json:"profileId"`
+	CustomerID        string          `json:"customerId"`
+	MandateID         string          `json:"mandateId"`
+	RecurringType     string          `json:"recurringType"`
+	SettlementID      string          `json:"settlementId"`
+	Metadata          interface{}     `json:"metadata"`
+	Details           interface{}     `json:"details"`
+	Links             PaymentLinks    `json:"links"`
 }
 
 type PaymentLinks struct {
