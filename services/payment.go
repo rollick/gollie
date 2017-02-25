@@ -26,12 +26,14 @@ type Payment struct {
 	Method            string           `json:"method"`
 	Status            string           `json:"status"`
 	Locale            string           `json:"locale"`
+	CountryCode       string           `json:"countryCode"`
 	ProfileID         string           `json:"profileId"`
 	CustomerID        string           `json:"customerId"`
 	MandateID         string           `json:"mandateId"`
 	RecurringType     string           `json:"recurringType"`
-	SettlementID      string           `json:"settlementID"`
+	SettlementID      string           `json:"settlementId"`
 	Metadata          interface{}      `json:"metadata"`
+	Details           interface{}      `json:"details"`
 	Links             PaymentLinks     `json:"links"`
 }
 
@@ -40,6 +42,7 @@ type PaymentLinks struct {
 	WebhookUrl  string `json:"webhookUrl"`
 	RedirectUrl string `json:"redirectUrl"`
 	Settlement  string `json:"settlement"`
+	Refunds     string `json:"refunds"`
 }
 
 // PaymentList is a list of payment objects and list metadata

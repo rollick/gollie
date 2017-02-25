@@ -1,4 +1,4 @@
-// Mollie API access (partial) using token authentication
+// Package gollie is for Mollie API access (partial) using token authentication
 package gollie
 
 import "github.com/rollick/gollie/services"
