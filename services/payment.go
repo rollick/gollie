@@ -62,6 +62,8 @@ type PaymentRequest struct {
 	Method        string          `json:"method,omitempty"`
 	Locale        string          `json:"locale,omitempty"`
 	RecurringType string          `json:"recurringType,omitempty"`
+	CustomerID    string          `json:"customerId,omitempty"`
+	MandateID     string          `json:"mandateId,omitempty"`
 	Metadata      interface{}     `json:"metadata,omitempty"`
 }
 
