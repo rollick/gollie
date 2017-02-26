@@ -48,6 +48,7 @@ type Mandate struct {
 	CustomerId       string `json:"customerId"`
 	Details          MandateDetails
 	MandateReference string     `json:"mandateReference"`
+	SignatureDate    string     `json:"signatureDate"`
 	CreatedDateTime  *time.Time `json:"createdDateTime"`
 }
 

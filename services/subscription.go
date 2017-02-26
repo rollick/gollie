@@ -17,7 +17,7 @@ type SubscriptionService struct {
 // Subscription is a subscription object
 // https://www.mollie.com/nl/docs/reference/subscriptions/get#response
 type Subscription struct {
-	Resource    string          `json:"respurce"`
+	Resource    string          `json:"resource"`
 	ID          string          `json:"id"`
 	Description string          `json:"description"`
 	Amount      decimal.Decimal `json:"amount"`
@@ -29,9 +29,9 @@ type Subscription struct {
 	Locale      string          `json:"locale"`
 	ProfileID   string          `json:"profileId"`
 	CustomerID  string          `json:"customerId"`
-	Metadata    interface{}     `json:"metadata"`
-	CancelledAt time.Time       `json:"cancelledDatetime"`
-	CreatedAt   time.Time       `json:"createdDatetime"`
+	CancelledAt *time.Time      `json:"cancelledDatetime"`
+	CreatedAt   *time.Time      `json:"createdDatetime"`
+	StartDate   string          `json:"startDate"`
 	Links       PaymentLinks    `json:"links"`
 }
 
@@ -48,8 +48,9 @@ type SubscriptionRequest struct {
 	Amount      decimal.Decimal `json:"amount,omitempty"`
 	Times       int             `json:"times,omitempty"`
 	Interval    string          `json:"interval,omitempty"`
-	Method      string          `json:"method,omitempty"`
+	StartDate   string          `json:"startDate,omitempty"`
 	Description string          `json:"description,omitempty"`
+	Method      string          `json:"method,omitempty"`
 	WebhookUrl  string          `json:"webhookUrl,omitempty"`
 }
 
