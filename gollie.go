@@ -12,6 +12,7 @@ type Client struct {
 	MethodService       *services.MethodService
 	PaymentService      *services.PaymentService
 	CustomerService     *services.CustomerService
+	MandateService      *services.MandateService
 	SubscriptionService *services.SubscriptionService
 	// TODO: Other service endpoints to be added
 }
@@ -22,6 +23,7 @@ func NewClient(accessToken string) *Client {
 		MethodService:       services.NewMethodService(accessToken),
 		PaymentService:      services.NewPaymentService(accessToken),
 		CustomerService:     services.NewCustomerService(accessToken),
+		MandateService:      services.NewMandateService(accessToken),
 		SubscriptionService: services.NewSubscriptionService(accessToken),
 	}
 }
