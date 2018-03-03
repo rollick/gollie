@@ -6,14 +6,6 @@ import (
 	"github.com/dghubble/sling"
 )
 
-// ListMetadata is basic metadata for list queries
-type ListMetadata struct {
-	TotalCount int       `json:"totalCount"`
-	Offset     int       `json:"offset"`
-	Count      int       `json:"count"`
-	Links      ListLinks `json:"links"`
-}
-
 // Method is a payment method type
 // https://www.mollie.com/nl/docs/reference/methods/get
 type Method struct {

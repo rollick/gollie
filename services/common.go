@@ -35,6 +35,14 @@ type ListLinks struct {
 	Last     string `json:"last"`
 }
 
+// ListMetadata is basic metadata for list queries
+type ListMetadata struct {
+	TotalCount int       `json:"totalCount"`
+	Offset     int       `json:"offset"`
+	Count      int       `json:"count"`
+	Links      ListLinks `json:"links"`
+}
+
 // NewClient returns a new Mollie client
 func NewClient(accessToken string) *sling.Sling {
 	// Create mollie api client

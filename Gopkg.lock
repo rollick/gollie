@@ -4,7 +4,8 @@
 [[projects]]
   name = "github.com/dghubble/sling"
   packages = ["."]
-  revision = "91b015f8c5e231605ed75a74130ca0fa48b28cb1"
+  revision = "eb56e89ac5088bebb12eef3cb4b293300f43608b"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
