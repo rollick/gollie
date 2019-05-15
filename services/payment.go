@@ -2,113 +2,97 @@ package services
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/dghubble/sling"
-	"github.com/rollick/decimal"
 )
 
+type applicationFee struct {
+	Amount      Amount `json:"amount"`
+	Description string `json:"description"`
+}
+
 // Payment is a payment object
-// https://www.mollie.com/nl/docs/reference/payments/get#response
+// https://docs.mollie.com/reference/v2/payments-api/get-payment#response
 type Payment struct {
-	ID                string          `json:"id"`
-	Description       string          `json:"description"`
-	CreatedDatetime   *time.Time      `json:"createdDatetime"`
-	PaidDatetime      *time.Time      `json:"paidDatetime"`
-	CancelledDatetime *time.Time      `json:"cancelledDatetime"`
-	ExpiredDatetime   *time.Time      `json:"expiredDatetime"`
-	ExpiryPeriod      string          `json:"expiryPeriod"`
-	Amount            decimal.Decimal `json:"amount"`
-	AmountRemaining   decimal.Decimal `json:"amountRemaining"`
-	AmountRefunded    decimal.Decimal `json:"amountRefunded"`
-	Mode              string          `json:"mode"`
-	Method            string          `json:"method"`
-	Status            string          `json:"status"`
-	Locale            string          `json:"locale"`
-	CountryCode       string          `json:"countryCode"`
-	ProfileID         string          `json:"profileId"`
-	CustomerID        string          `json:"customerId"`
-	MandateID         string          `json:"mandateId"`
-	RecurringType     string          `json:"recurringType"`
-	SettlementID      string          `json:"settlementId"`
-	Metadata          interface{}     `json:"metadata"`
-	Details           interface{}     `json:"details"`
-	Links             PaymentLinks    `json:"links"`
+	Resource         string          `json:"resource"`
+	ID               string          `json:"id"`
+	Mode             string          `json:"mode"`
+	CreatedAt        time.Time       `json:"createdAt"`
+	Status           string          `json:"status"`
+	IsCancelable     bool            `json:"isCancelable"`
+	AuthorizedAt     *time.Time      `json:"authorizedAt,omitempty"`
+	PaidAt           *time.Time      `json:"paidAt,omitempty"`
+	CanceledAt       *time.Time      `json:"canceledAt,omitempty"`
+	ExpiresAt        time.Time       `json:"expiresAt"`
+	ExpiredAt        *time.Time      `json:"expiredAt,omitempty"`
+	FailedAt         time.Time       `json:"failedAt"`
+	Amount           Amount          `json:"amount"`
+	AmountRefunded   *Amount         `json:"amountRefunded,omitempty"`
+	AmountRemaining  *Amount         `json:"amountRemaining,omitempty"`
+	AmountCaptured   *Amount         `json:"amountCaptured,omitempty"`
+	Description      string          `json:"description"`
+	RedirectUrl      *string         `json:"redirectUrl,omitempty"`
+	WebhookUrl       *string         `json:"webhookUrl,omitempty"`
+	Method           string          `json:"method"`
+	Details          interface{}     `json:"details"`
+	Metadata         interface{}     `json:"metadata"`
+	Locale           string          `json:"locale"`
+	CountryCode      *string         `json:"countryCode,omitempty"`
+	ProfileID        string          `json:"profileId"`
+	SettlementAmount *Amount         `json:"settlementAmount,omitempty"`
+	SettlementID     *string         `json:"settlementId,omitempty"`
+	CustomerID       *string         `json:"customerId,omitempty"`
+	SequenceType     string          `json:"sequenceType"`
+	MandateID        *string         `json:"mandateId,omitempty"`
+	SubscriptionID   *string         `json:"subscriptionId,omitempty"`
+	OrderID          *string         `json:"orderId,omitempty"`
+	ApplicationFee   *applicationFee `json:"applicationFee,omitempty"`
+	Links            PaymentLinks    `json:",inline"`
 }
 
 // PaymentLinks respresents the links object returned in a Payment
-// https://www.mollie.com/en/docs/reference/payments/get#response
+// https://docs.mollie.com/reference/v2/payments-api/get-payment#response
 type PaymentLinks struct {
-	PaymentUrl  string `json:"paymentUrl"`
-	WebhookUrl  string `json:"webhookUrl"`
-	RedirectUrl string `json:"redirectUrl"`
-	Settlement  string `json:"settlement"`
-	Refunds     string `json:"refunds"`
+	Links map[string]struct {
+		Self               Link  `json:"self"`
+		Checkout           *Link `json:"checkout,omitempty"`
+		ChangePaymentState Link  `json:"changePaymentState"`
+		Refunds            *Link `json:"refunds,omitempty"`
+		Chargebacks        *Link `json:"chargebacks,omitempty"`
+		Captures           *Link `json:"captures,omitempty"`
+		Settlement         *Link `json:"settlement,omitempty"`
+		Documentation      Link  `json:"documentation"`
+		Mandate            *Link `json:"mandate,omitempty"`
+		Customer           *Link `json:"customer,omitempty"`
+		Order              *Link `json:"order,omitempty"`
+		Status             *Link `json:"status,omitempty"`
+		PayOnline          *Link `json:"payOnline,omitempty"`
+	} `json:"_links"`
 }
 
 // PaymentList is a list of payment objects and list metadata
-// https://www.mollie.com/nl/docs/reference/payments/list#response
+// https://docs.mollie.com/reference/v2/payments-api/list-payments
 type PaymentList struct {
 	Data         []*Payment `json:"data"`
-	ListMetadata `bson:",inline"`
+	ListMetadata `json:",inline"`
 }
 
 // PaymentRequest is a payment request
-// https://www.mollie.com/nl/docs/reference/payments/create
+// https://docs.mollie.com/reference/v2/payments-api/create-payment#parameters
 type PaymentRequest struct {
-	Amount        decimal.Decimal `json:"amount,omitempty"`
-	Description   string          `json:"description,omitempty"`
-	RedirectUrl   string          `json:"redirectUrl,omitempty"`
-	WebhookUrl    string          `json:"webhookUrl,omitempty"`
-	Method        string          `json:"method,omitempty"`
-	Locale        string          `json:"locale,omitempty"`
-	RecurringType string          `json:"recurringType,omitempty"`
-	CustomerID    string          `json:"customerId,omitempty"`
-	MandateID     string          `json:"mandateId,omitempty"`
-	Metadata      interface{}     `json:"metadata,omitempty"`
-}
-
-// PaymentRefund is a payment refund response
-// https://www.mollie.com/en/docs/reference/refunds/get#response
-type PaymentRefund struct {
-	ID             string          `json:"id"`
-	Payment        Payment         `json:"payment"`
-	Amount         decimal.Decimal `json:"amount"`
-	Status         string          `json:"status"`
-	RefundDatetime *time.Time      `json:"refundDatetime"`
-}
-
-// PaymentRefundRequest is a payment refund request
-// https://www.mollie.com/en/docs/reference/refunds/create
-type PaymentRefundRequest struct {
-	Amount      decimal.Decimal `json:"amount,omitempty"`
-	Description string          `json:"description,omitempty"`
-}
-
-// PaymentRefundList is a list of payment refund objects and list metadata
-// https://www.mollie.com/en/docs/reference/refunds/list#response
-type PaymentRefundList struct {
-	Data         []*PaymentRefund `json:"data"`
-	ListMetadata `bson:",inline"`
-}
-
-// PaymentChargeback is a payment chargeback response
-// https://www.mollie.com/en/docs/reference/chargebacks/get#response
-type PaymentChargeback struct {
-	ID                 string          `json:"id"`
-	Payment            Payment         `json:"payment"`
-	Amount             decimal.Decimal `json:"amount"`
-	Status             string          `json:"status"`
-	ChargebackDatetime *time.Time      `json:"chargebackDatetime"`
-	ReversedDatetime   *time.Time      `json:"reversedDatetime"`
-}
-
-// PaymentChargebackList is a list of payment chargeback objects and list metadata
-// https://www.mollie.com/en/docs/reference/chargebacks/list#response
-type PaymentChargebackList struct {
-	Data         []*PaymentChargeback `json:"data"`
-	ListMetadata `bson:",inline"`
+	Amount       Amount      `json:"amount"`
+	Description  string      `json:"description"`
+	RedirectUrl  string      `json:"redirectUrl"`
+	WebhookUrl   string      `json:"webhookUrl,omitempty"`
+	Locale       string      `json:"locale,omitempty"`
+	Method       string      `json:"method,omitempty"`
+	Metadata     interface{} `json:"metadata,omitempty"`
+	SequenceType string      `json:"sequenceType,omitempty"`
+	CustomerID   string      `json:"customerId,omitempty"`
+	MandateID    string      `json:"mandateId,omitempty"`
 }
 
 // PaymentService provides methods for creating and reading payments
@@ -131,7 +115,7 @@ func (s *PaymentService) List(params *ListParams) (PaymentList, *http.Response, 
 	payments := new(PaymentList)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path("payments").QueryStruct(params).Receive(payments, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 
@@ -143,7 +127,7 @@ func (s *PaymentService) Fetch(paymentId string) (Payment, *http.Response, error
 	payment := new(Payment)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Get(fmt.Sprintf("payments/%s", paymentId)).Receive(payment, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 	return *payment, resp, err
@@ -154,65 +138,20 @@ func (s *PaymentService) Create(paymentBody *PaymentRequest) (Payment, *http.Res
 	payment := new(Payment)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Post("payments").BodyJSON(paymentBody).Receive(payment, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 	return *payment, resp, err
 }
 
-// CreateRefund creates a new payment refund
-func (s *PaymentService) CreateRefund(paymentId string, refundBody *PaymentRefundRequest) (PaymentRefund, *http.Response, error) {
-	refund := new(PaymentRefund)
+// Cancel will cancel a payment if possible
+func (s *PaymentService) Cancel(paymentId string) (Payment, *http.Response, error) {
+	payment := new(Payment)
 	mollieError := new(MollieError)
-	resp, err := s.sling.New().Post(fmt.Sprintf("payments/%s/refunds", paymentId)).BodyJSON(refundBody).Receive(refund, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	resp, err := s.sling.New().Delete(fmt.Sprintf("payments/%s", paymentId)).Receive(payment, mollieError)
+	log.Printf("+%v", mollieError.Links)
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
-	return *refund, resp, err
-}
-
-// FetchRefund returns a payment refund
-func (s *PaymentService) FetchRefund(paymentId string, refundId string) (PaymentRefund, *http.Response, error) {
-	refund := new(PaymentRefund)
-	mollieError := new(MollieError)
-	resp, err := s.sling.New().Get(fmt.Sprintf("payments/%s/refunds/%s", paymentId, refundId)).Receive(refund, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
-		err = mollieError
-	}
-	return *refund, resp, err
-}
-
-// RefundList returns all payment refunds created
-func (s *PaymentService) RefundList(paymentId string, params *ListParams) (PaymentRefundList, *http.Response, error) {
-	refunds := new(PaymentRefundList)
-	mollieError := new(MollieError)
-	resp, err := s.sling.New().Path(fmt.Sprintf("payments/%s/refunds", paymentId)).QueryStruct(params).Receive(refunds, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
-		err = mollieError
-	}
-
-	return *refunds, resp, err
-}
-
-// FetchChargeback returns a payment chargeback
-func (s *PaymentService) FetchChargeback(paymentId string, chargebackId string) (PaymentChargeback, *http.Response, error) {
-	chargeback := new(PaymentChargeback)
-	mollieError := new(MollieError)
-	resp, err := s.sling.New().Get(fmt.Sprintf("payments/%s/chargebacks/%s", paymentId, chargebackId)).Receive(chargeback, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
-		err = mollieError
-	}
-	return *chargeback, resp, err
-}
-
-// ChargebackList returns all payment chargebacks created
-func (s *PaymentService) ChargebackList(paymentId string, params *ListParams) (PaymentChargebackList, *http.Response, error) {
-	chargebacks := new(PaymentChargebackList)
-	mollieError := new(MollieError)
-	resp, err := s.sling.New().Path(fmt.Sprintf("payments/%s/chargebacks", paymentId)).QueryStruct(params).Receive(chargebacks, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
-		err = mollieError
-	}
-
-	return *chargebacks, resp, err
+	return *payment, resp, err
 }

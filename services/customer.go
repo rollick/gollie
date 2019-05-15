@@ -58,7 +58,7 @@ func (s *CustomerService) List(params *ListParams) (CustomerList, *http.Response
 	customers := new(CustomerList)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path("customers").QueryStruct(params).Receive(customers, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 
@@ -70,7 +70,7 @@ func (s *CustomerService) Fetch(customerId string) (Customer, *http.Response, er
 	customer := new(Customer)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Get(fmt.Sprintf("customers/%s", customerId)).Receive(customer, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 	return *customer, resp, err
@@ -81,7 +81,7 @@ func (s *CustomerService) Create(customerBody *CustomerRequest) (Customer, *http
 	customer := new(Customer)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Post("customers").BodyJSON(customerBody).Receive(customer, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 	return *customer, resp, err
@@ -92,7 +92,7 @@ func (s *CustomerService) Update(customerBody *CustomerRequest) (Customer, *http
 	customer := new(Customer)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Put("customers").BodyJSON(customerBody).Receive(customer, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 	return *customer, resp, err
@@ -103,7 +103,7 @@ func (s *CustomerService) PaymentList(customerId string, params *ListParams) (Pa
 	payments := new(PaymentList)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path(fmt.Sprintf("customers/%s/payments", customerId)).QueryStruct(params).Receive(payments, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 
@@ -115,7 +115,7 @@ func (s *CustomerService) Payment(customerId string, paymentBody PaymentRequest)
 	payment := new(Payment)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Post(fmt.Sprintf("customers/%s/payments", customerId)).BodyJSON(paymentBody).Receive(payment, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 

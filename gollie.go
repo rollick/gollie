@@ -1,4 +1,3 @@
-// Package gollie is for Mollie API access (partial) using token authentication
 package gollie
 
 import "github.com/rollick/gollie/services"
@@ -14,7 +13,7 @@ type Client struct {
 	CustomerService     *services.CustomerService
 	MandateService      *services.MandateService
 	SubscriptionService *services.SubscriptionService
-	// TODO: Other service endpoints to be added
+	OrderService        *services.OrderService
 }
 
 // NewClient returns a new Client
@@ -25,5 +24,6 @@ func NewClient(accessToken string) *Client {
 		CustomerService:     services.NewCustomerService(accessToken),
 		MandateService:      services.NewMandateService(accessToken),
 		SubscriptionService: services.NewSubscriptionService(accessToken),
+		OrderService:        services.NewOrderService(accessToken),
 	}
 }

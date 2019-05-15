@@ -48,7 +48,7 @@ func (s *MethodService) List() (MethodList, *http.Response, error) {
 	methods := new(MethodList)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path("methods").Receive(methods, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 

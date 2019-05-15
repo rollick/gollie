@@ -68,7 +68,7 @@ func (s *SubscriptionService) List(customerId string, params *ListParams) (Subsc
 	subscriptions := new(SubscriptionList)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path(fmt.Sprintf("customers/%s/subscriptions", customerId)).QueryStruct(params).Receive(subscriptions, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 
@@ -80,7 +80,7 @@ func (s *SubscriptionService) Fetch(customerId string, subscriptionId string) (S
 	subscription := new(Subscription)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Get(fmt.Sprintf("customers/%s/subscriptions/%s", customerId, subscriptionId)).Receive(subscription, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 	return *subscription, resp, err
@@ -91,7 +91,7 @@ func (s *SubscriptionService) Create(customerId string, subscriptionBody *Subscr
 	subscription := new(Subscription)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Post(fmt.Sprintf("customers/%s/subscriptions", customerId)).BodyJSON(subscriptionBody).Receive(subscription, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 	return *subscription, resp, err

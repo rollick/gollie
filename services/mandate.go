@@ -62,7 +62,7 @@ func (s *MandateService) List(customerId string, params *ListParams) (MandateLis
 	mandates := new(MandateList)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path(fmt.Sprintf("customers/%s/mandates", customerId)).QueryStruct(params).Receive(mandates, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 
@@ -74,7 +74,7 @@ func (s *MandateService) Create(customerId string, mandateBody PaymentRequest) (
 	mandate := new(Mandate)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Post(fmt.Sprintf("customers/%s/mandates", customerId)).BodyJSON(mandateBody).Receive(mandate, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 
@@ -86,7 +86,7 @@ func (s *MandateService) Fetch(customerId string, mandateId string) (Mandate, *h
 	mandate := new(Mandate)
 	mollieError := new(MollieError)
 	resp, err := s.sling.New().Path(fmt.Sprintf("customers/%s/mandates/%s", customerId, mandateId)).Receive(mandate, mollieError)
-	if err == nil && mollieError.Err.Type != "" {
+	if err == nil && mollieError.Status >= 300 {
 		err = mollieError
 	}
 
