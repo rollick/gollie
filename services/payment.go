@@ -13,12 +13,14 @@ import (
 // https://www.mollie.com/nl/docs/reference/payments/get#response
 type Payment struct {
 	ID                string          `json:"id"`
+	Resource          string          `json:"resource"`
 	Description       string          `json:"description"`
 	CreatedDatetime   *time.Time      `json:"createdDatetime"`
 	PaidDatetime      *time.Time      `json:"paidDatetime"`
 	CancelledDatetime *time.Time      `json:"cancelledDatetime"`
 	ExpiredDatetime   *time.Time      `json:"expiredDatetime"`
 	ExpiryPeriod      string          `json:"expiryPeriod"`
+	FailedDatetime    *time.Time      `json:"failedDatetime"`
 	Amount            decimal.Decimal `json:"amount"`
 	AmountRemaining   decimal.Decimal `json:"amountRemaining"`
 	AmountRefunded    decimal.Decimal `json:"amountRefunded"`
@@ -30,11 +32,21 @@ type Payment struct {
 	ProfileID         string          `json:"profileId"`
 	CustomerID        string          `json:"customerId"`
 	MandateID         string          `json:"mandateId"`
-	RecurringType     string          `json:"recurringType"`
+	SubscriptionID    string          `json:"subscriptionId"`
 	SettlementID      string          `json:"settlementId"`
+	RecurringType     string          `json:"recurringType"`
+	FailureReason     string          `json:"failureReason"`
+	ApplicationFee    ApplicationFee  `json:"applicationFee"`
+	Issuer            string          `json:"issuer"`
 	Metadata          interface{}     `json:"metadata"`
 	Details           interface{}     `json:"details"`
 	Links             PaymentLinks    `json:"links"`
+}
+
+// ApplicationFee is the application fee, if the payment was created with one.
+type ApplicationFee struct {
+	Amount      decimal.Decimal `json:"amount"`
+	Description string          `json:"description"`
 }
 
 // PaymentLinks respresents the links object returned in a Payment
